@@ -1,9 +1,9 @@
 Origin: 李子源
 Label: 李子源
 Suite: stable
-Version: 1.0
-Codename: 玩游戏的李子-
-Architectures: iphoneos-arm64
+Version: 2.1
+Codename: 玩科技的李子
+Architectures: iphoneos-arm iphoneos-arm64 iphoneos-arm64e
 Components: main
-Description: lizi's Sileo Repository
+Description: 漏洞不止，越狱不尽。李子源摘李，乐趣无极限。我是一名初中生。
 Icon: file://CydiaIcon.png
