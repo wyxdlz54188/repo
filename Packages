@@ -173,6 +173,23 @@ Priority: optional
 Description: 一个为无根越狱准备的插件源
 Name: 整合插件源
 
+Package: liyu-qi.github.io.theosinstaller
+Version: 3.0
+Architecture: iphoneos-arm64
+Maintainer: WYXDLZ <lizi54188@outlook.com>
+Installed-Size: 14899
+Filename: debs/theosinstaller.deb
+Size: 1208
+MD5sum: aee131e26f42c7a67c8aa2d376a44c4e
+SHA1: 750f690d00582c906f74401bb3e23711257faeb8
+SHA256: cdf4fbba775a984cc6efa104e52a1c92004a0e0bfc4d9412bb2cc81f59cd0937
+Section: 终端
+Description: theos安装器
+Tag: compatible_min::ios14.0
+Author: WYXDLZ <lizi54188@outlook.com>
+Icon: https://img.chariz.cloud/icon/newterm-beta/icon@3x.png
+Name: Theosinstaller_bywyxdlz
+
 Package: lizi.ftt.cn
 Version: 1.0
 Architecture: iphoneos-arm64
