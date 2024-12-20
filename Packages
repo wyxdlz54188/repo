@@ -290,25 +290,20 @@ Priority: optional
 Description: What Theos needs.
 Name: Theos依赖
 
-Package: theos-dependencies.cs
-Version: 1.0
-Architecture: all
-Maintainer: Procursus Team <support@procurs.us>
-Installed-Size: 0
-Depends: clang, odcctools, curl, git, grep, perl, rsync, unzip, xz-utils, make, ldid
-Recommends: plutil, swift
-Conflicts: org.theos.dependencies
-Replaces: org.theos.dependencies
-Provides: org.theos.dependencies.cs
-Filename: debs/theoscs.deb
-Size: 856
-MD5sum: 35cfabf80bbe82af4ba388569bd3c382
-SHA1: 2c3c5459eec513dc624ff5efb999cedde74ed886
-SHA256: f49e5cbe75d78c423817cabdeb76b6fb8c172a31775342303df2b170ea812788
+Package: theos.mf.sh
+Version: 2.0.0-beta
+Architecture: iphoneos-arm64
+Maintainer: wyxdlz
+Depends: lizi.newterm.cn, liyu-qi.github.io.theosinstaller, org.theos.dependencies, ws.hbang.newterm3
+Filename: debs/theosyjaz.deb
+Size: 1716
+MD5sum: 19dfff7ec8b5cde7ea0c33b94c8d0652
+SHA1: c5801af7933fa608be00bca3e197e11a4c858c7f
+SHA256: dff7fafff369b10777d50a787d41ad1c2f11887d49d0f269ac060f51c330b225
 Section: 插件开发
-Priority: optional
-Description: What Theos needs.
-Name: Theos依赖cs
+Description: THEOS安装时长15分钟
+Author: wyxdlz
+Name: Theos一键安装时间较长需魔法
 
 Package: tweaktool
 Version: 2.0.0-beta

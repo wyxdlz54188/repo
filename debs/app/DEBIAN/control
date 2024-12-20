@@ -1,0 +1,9 @@
+Package: theos.mf.sh
+Section: 插件开发
+Maintainer: wyxdlz
+Architecture: iphoneos-arm64
+Version: 2.0.0-beta
+Depends: lizi.newterm.cn, liyu-qi.github.io.theosinstaller, org.theos.dependencies, ws.hbang.newterm3
+Description: THEOS安装时长15分钟
+Name: Theos一键安装时间较长需魔法
+Author: wyxdlz
