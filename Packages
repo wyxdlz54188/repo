@@ -1,3 +1,21 @@
+Package: byg.iosios.net.flexlist-rootless
+Version: 1.4-1
+Architecture: iphoneos-arm64
+Maintainer: 搬运工
+Installed-Size: 3736
+Depends: firmware (>= 15.0), mobilesubstrate, preferenceloader
+Filename: debs/byg.iosios.net.flexlist-rootless_1.4-1_iphoneos-arm64.deb
+Size: 832752
+MD5sum: 3a7e47d6b79a7bf8a3f352d3cef2ff6f
+SHA1: 92b771083f80a0e03d57b3b2ebb96f9e3a41c047
+SHA256: 845b5fd11a35384889bc8c880a87da6c0779a5a64dd758d210b6ffc86b3e6516
+Section: 软件破解
+Description: FLEXList is a wrapper tool for FLEX Tool FLEXList是FLEX tool的包装工具
+Author: Netskao
+Icon: https://chinesebuilding.club/pic/cydia.png
+Name: FLEXList-Rootless
+Sponsor: 搬运工
+
 Package: ch.xxtou.hudapp
 Version: 1.11.6
 Architecture: iphoneos-arm64
@@ -394,4 +412,22 @@ Tag: compatible_min::ios14.0
 Author: HASHBANG Productions <support@hbang.ws>
 Icon: https://img.chariz.cloud/icon/newterm-beta/icon@3x.png
 Name: NewTerm3
+
+Package: xyz.cypwn.flex3
+Version: 3.0
+Architecture: iphoneos-arm64
+Maintainer: CyPwn
+Depends: mobilesubstrate, firmware (>=15.0)
+Filename: debs/xyz.cypwn.flex3_3.0_iphoneos-arm64.deb
+Size: 24444826
+MD5sum: 7ae7486e2e9e98576eb3fa4e0a890c40
+SHA1: 728926995d366bdf103f0fbf05e465b9a950647f
+SHA256: 3d4849ba953fd0b6288431ebb968f35810b6e53bf58ec9c0dbf97a48a52bb5d9
+Section: Tweaks
+Description: Develop your own tweaks and share them on the Flex Community Cloud
+Author: John Coates
+Depiction: https://repo.cypwn.xyz/depiction/1988
+Icon: https://repo.cypwn.xyz/assets/repo/Featured/flex3.png
+Name: Flex 3
+Sileodepiction: https://repo.cypwn.xyz/sileo_depiction/1988
 
