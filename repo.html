@@ -11,25 +11,47 @@
 				window.scrollTo(0, 1);
 			}
 		</script>
-		<script type="text/javascript">
-document.oncontextmenu=function(e){return false;}
-</script>
-<style>
-body {
--moz-user-select:none;   <!--禁止文字让选中-->
-}
-</style>
-<script type="text/javascript">
-        document.onkeydown = function () {
-            if (window.event && window.event.keyCode == 123) {
-                event.keyCode = 0;
-                event.returnValue = false;
-                return false;
-            }
-        };
-</script>
 		<link rel="stylesheet" href="./css/style.css" type="text/css" media="all" />
 		<link href="css/font-awesome.min.css" rel="stylesheet">
+		<SCRIPT language=JavaScript> 
+		 
+		 function password() { 
+		  
+		  var testV = 1; 
+		   
+		   var pass1 = prompt('请输入密码:',''); 
+		    
+		    while (testV < 3) { 
+		     
+		     if (!pass1) 
+		      
+		      history.go(-1); 
+		       
+		       if (pass1 == "wkjdlz54188") { 
+		        
+		        alert('密码正确!'); 
+		         
+		         break; 
+		          
+		          } 
+		           
+		           testV+=-1; 
+		            
+		            var pass1 = prompt('密码错误!请重新输入:'); 
+		             
+		             } 
+		              
+		              if (pass1!="password" & testV ==3) 
+		               
+		               history.go(-1); 
+		                
+		                return " "; 
+		                 
+		                 } 
+		                  
+		                  document.write(password()); 
+		                   
+		                   </SCRIPT>
 	</head>
 	<body>
 		<div class="main-bg"/>
@@ -41,7 +63,7 @@ body {
 		</div>
 		</br>
 		<div style="text-align: left; background:">
-		<p>1.源码<a href="./repo/repo.zip"/>下载</a>  <a href="./repo/打赏.png"/>获取解压密码</a> <a href="./repo/repomy.txt"/>Password</a>（暂定）</p>
+		<p>1.源码<a href="./repo/repo.zip"/>下载</a> <a href="./repo/repomy.txt"/>Password</a>（暂定）</p>
 		<p>2.解压源码</p></b>
 		<p>3.打开<a href="https://github.com"/>GitHub</a>并登录</p></b>
 		<p>4.创建一个仓库名字随意</p></b>
