@@ -39,6 +39,6 @@ jobs:
           git init
           git add .
           git commit -m "上传debs"
-          git remote add origin https://${{ secrets.GH_TOKEN }}@github.com/wyxdlz54188/wyxdlz54188.github.io.git
+          git remote add origin https://${{ secrets.GH_TOKEN }}@github.com:wyxdlz54188/repo.git
           git push origin HEAD:gh-pages -f
 
