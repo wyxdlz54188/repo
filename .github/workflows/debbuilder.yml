@@ -36,8 +36,40 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          ls -a
+          mkdir repo
+          cp CNAME /repo
+          cp CydiaIcon.png /repo
+          cp CydiaIcon@2x.png /repo
+          cp CydiaIcon@3x.png /repo
+          cp Packages /repo
+          cp Packages.bz2 /repo
+          cp Packages.gz /repo
+          cp README.md /repo
+          cp Release /repo
+          cp about.html /repo
+          cp -rf css /repo
+          cp debbuildrootless.html /repo
+          cp -rf debs /repo
+          cp -rf flex /repo
+          cp flex1.html /repo
+          cp -rf fonts /repo
+          cp git.sh /repo
+          cp -rfimages /repo
+          cp index.html /repo
+          cp lizibilibili.html /repo
+          cp -rf old_icon /repo
+          cp -rf old_images /repo
+          cp packages.sh /repo
+          cp -rf repo /repo
+          cp repo.html /repo
+          cp repoyd.html /repo
+          cp theosinstaller.html /repo
+          cp zj.html /repo
+          cp zjflex.html /repo
+          cd repo
+          git init
           git add .
           git commit -m "上传debs"
+          git remote add origin https://${{ secrets.GH_TOKEN }}@github.com/wyxdlz54188/repo.git
           git push origin HEAD:gh-pages -f
 
