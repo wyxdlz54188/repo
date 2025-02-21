@@ -36,6 +36,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
+          rm -rf /.git/*
           ls -a
           git add .
           git commit -m "上传debs"
