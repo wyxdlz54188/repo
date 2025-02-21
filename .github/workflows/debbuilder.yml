@@ -36,9 +36,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          ls
+          ls -a
           git add .
           git commit -m "上传debs"
           git remote add origin https://${{ secrets.GH_TOKEN }}@github.com/wyxdlz54188/repo.git
-          git push -u origin HEAD:gh-pages -f --force
+          git push origin HEAD:gh-pages -f
 
