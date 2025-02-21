@@ -36,36 +36,36 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          mkdir repo
-          cp CNAME /repo
-          cp CydiaIcon.png /repo
-          cp CydiaIcon@2x.png /repo
-          cp CydiaIcon@3x.png /repo
-          cp Packages /repo
-          cp Packages.bz2 /repo
-          cp Packages.gz /repo
-          cp README.md /repo
-          cp Release /repo
-          cp about.html /repo
-          cp -rf css /repo
-          cp debbuildrootless.html /repo
-          cp -rf debs /repo
-          cp -rf flex /repo
-          cp flex1.html /repo
-          cp -rf fonts /repo
-          cp git.sh /repo
-          cp -rfimages /repo
-          cp index.html /repo
-          cp lizibilibili.html /repo
-          cp -rf old_icon /repo
-          cp -rf old_images /repo
-          cp packages.sh /repo
-          cp -rf repo /repo
-          cp repo.html /repo
-          cp repoyd.html /repo
-          cp theosinstaller.html /repo
-          cp zj.html /repo
-          cp zjflex.html /repo
+          mkdir rep
+          cp CNAME /rep
+          cp CydiaIcon.png /rep
+          cp CydiaIcon@2x.png /rep
+          cp CydiaIcon@3x.png /rep
+          cp Packages /rep
+          cp Packages.bz2 /rep
+          cp Packages.gz /rep
+          cp README.md /rep
+          cp Release /rep
+          cp about.html /rep
+          cp -rf css /rep
+          cp debbuildrootless.html /rep
+          cp -rf debs /rep
+          cp -rf flex /rep
+          cp flex1.html /rep
+          cp -rf fonts /rep
+          cp git.sh /rep
+          cp -rfimages /rep
+          cp index.html /rep
+          cp lizibilibili.html /rep
+          cp -rf old_icon /rep
+          cp -rf old_images /rep
+          cp packages.sh /rep
+          cp -rf repo /rep
+          cp repo.html /rep
+          cp repoyd.html /rep
+          cp theosinstaller.html /rep
+          cp zj.html /rep
+          cp zjflex.html /rep
           cd repo
           git init
           git add .
