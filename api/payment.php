@@ -1,32 +1,54 @@
 <?php
-// 示例：使用Stripe处理支付
-require 'vendor/autoload.php';
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
 
-\Stripe\Stripe::setApiKey('your_stripe_secret_key');
+// 简单的支付处理示例（实际应集成Stripe/PayPal）
+class PaymentHandler {
+    private $pdo;
+    
+    public function __construct() {
+        $this->connectDB();
+    }
+    
+    private function connectDB() {
+        $this->pdo = new PDO('mysql:host=localhost;dbname=your_database', 'username', 'password');
+    }
+    
+    public function createPaymentSession($package_id, $device_udid, $email) {
+        try {
+            // 生成唯一的许可证令牌
+            $license_token = bin2hex(random_bytes(32));
+            $session_id = uniqid('sess_', true);
+            
+            // 存储到数据库
+            $stmt = $this->pdo->prepare("
+                INSERT INTO payments (session_id, package_id, device_udid, email, license_token, status, created_at) 
+                VALUES (?, ?, ?, ?, ?, 'pending', NOW())
+            ");
+            $stmt->execute([$session_id, $package_id, $device_udid, $email, $license_token]);
+            
+            return [
+                'success' => true,
+                'session_id' => $session_id,
+                'payment_url' => "https://yourpaymentdomain.com/checkout?session=" . $session_id
+            ];
+        } catch (Exception $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+}
 
+// 处理请求
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = json_decode(file_get_contents('php://input'), true);
     
-    try {
-        $session = \Stripe\Checkout\Session::create([
-            'payment_method_types' => ['card'],
-            'line_items' => [[
-                'price_data' => [
-                    'currency' => 'usd',
-                    'product_data' => ['name' => 'Sileo Package: ' . $input['package_id']],
-                    'unit_amount' => $input['amount'] * 100, // 转换为分
-                ],
-                'quantity' => 1,
-            ]],
-            'mode' => 'payment',
-            'success_url' => 'https://yourrepo.com/success?session_id={CHECKOUT_SESSION_ID}',
-            'cancel_url' => 'https://yourrepo.com/cancel',
-        ]);
-        
-        echo json_encode(['session_id' => $session->id]);
-    } catch (Exception $e) {
-        http_response_code(500);
-        echo json_encode(['error' => $e->getMessage()]);
-    }
+    $handler = new PaymentHandler();
+    $result = $handler->createPaymentSession(
+        $input['package_id'] ?? '',
+        $input['udid'] ?? '',
+        $input['email'] ?? ''
+    );
+    
+    echo json_encode($result);
 }
 ?>
