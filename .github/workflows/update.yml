@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write    # ← 必须！允许 workflow 推送文件
+  contents: write
 
 jobs:
   build:
