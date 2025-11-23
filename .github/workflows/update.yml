@@ -31,8 +31,8 @@ jobs:
 
       - name: Commit & Push
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
+          git config --global user.name "wyxdlz54188"
+          git config --global user.email "liyuqili_1379@qq.com"
 
           git add Packages Packages.gz Packages.bz2
 
