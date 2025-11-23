@@ -1,23 +1,71 @@
-name: Update Package Index
+name: Deploy Jekyll site and Debian Repository
+
 on:
   push:
-    paths: ['debs/**']
+    branches: ["master"]
+    paths:
+      - 'debs/*.deb'
   workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
-  update-packages:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Update Packages
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 确保获取完整历史记录，便于某些Jekyll插件运行
+          
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        
+      - name: Clean previous package files
         run: |
-          dpkg-scanpackages debs /dev/null > Packages
-          dpkg-scanpackages debs /dev/null | gzip -9c > Packages.gz
-          dpkg-scanpackages debs /dev/null | bzip2 > Packages.bz2
-      - name: Commit & Push changes
+          rm -f Packages Packages.bz2 Packages.gz
+          
+      - name: Generate Packages file for Debian repo
         run: |
-          git config user.name "wyxdlz5418k"
-          git config user.email "liyuqili_1379zi@qq.com"
-          git add Packages Packages.gz Packages.bz2
-          git diff --staged --quiet || git commit -m "Update package indexes"
-          git push
+          # 创建基本的Packages文件
+          dpkg-scanpackages --multiversion debs > Packages
+          # 创建压缩版本
+          gzip -9c < Packages > Packages.gz
+          bzip2 -9c < Packages > Packages.bz2
+          
+      - name: Create .nojekyll file
+        run: touch .nojekyll  # 禁止GitHub Pages使用Jekyll处理[citation:3]
+        
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+          
+      - name: Verify built site contents
+        run: |
+          echo "Built site contents:"
+          ls -la _site/
+          echo "Checking if Packages files are in _site:"
+          ls -la _site/Packages* || echo "Packages files not found in _site"
+          
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
