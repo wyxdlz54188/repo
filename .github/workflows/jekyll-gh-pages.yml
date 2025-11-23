@@ -1,14 +1,14 @@
-name: Deploy Repository
+name: Deploy Sileo Repository
 
 on:
   push:
-    branches: ["main"]
+    branches: ["master"]
     paths:
       - 'debs/*.deb'
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -17,105 +17,109 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
           
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-        
-      - name: Clean previous package files
+      - name: Setup repository tools
         run: |
-          rm -f Packages Packages.bz2 Packages.gz
+          sudo apt-get update
+          sudo apt-get install -y dpkg-dev dpkg-sig
           
-      - name: Generate Packages file using alternative method
+      - name: Clean previous package indexes
         run: |
-          # 方法1: 尝试使用ar直接提取控制信息（如果dpkg-scanpackages失败）
-          generate_packages_alternative() {
-            echo "使用替代方法生成 Packages 文件..."
-            > Packages  # 清空或创建文件
-            
-            for deb in debs/*.deb; do
-              if [ -f "$deb" ]; then
-                echo "处理: $(basename "$deb")"
-                
-                # 使用ar提取control.tar.gz
-                if ar -t "$deb" | grep -q "control.tar"; then
-                  # 提取控制信息
-                  ar -p "$deb" control.tar.gz | tar -xzO ./control 2>/dev/null > temp_control ||
-                  ar -p "$deb" control.tar.xz | tar -xJO ./control 2>/dev/null > temp_control ||
-                  ar -p "$deb" control.tar | tar -xO ./control 2>/dev/null > temp_control
-                  
-                  if [ -s temp_control ]; then
-                    # 获取文件大小和MD5
-                    filesize=$(stat -c%s "$deb")
-                    md5sum=$(md5sum "$deb" | cut -d' ' -f1)
-                    
-                    # 添加Package字段（从文件名提取）
-                    pkg_name=$(basename "$deb" | sed 's/_.*//')
-                    echo "Package: $pkg_name" >> Packages
-                    
-                    # 添加控制信息
-                    cat temp_control >> Packages
-                    
-                    # 添加大小和MD5
-                    echo "Filename: debs/$(basename "$deb")" >> Packages
-                    echo "Size: $filesize" >> Packages
-                    echo "MD5sum: $md5sum" >> Packages
-                    echo "" >> Packages
-                    
-                    echo "✓ 成功处理: $pkg_name"
-                  else
-                    echo "✗ 无法提取控制信息: $(basename "$deb")"
-                  fi
-                  rm -f temp_control
-                else
-                  echo "✗ 不是有效的deb包: $(basename "$deb")"
-                fi
-              fi
-            done
-          }
+          rm -f Packages Packages.bz2 Packages.gz Packages.xz
+          rm -f Release Release.gpg
           
-          # 首先尝试标准方法
-          if command -v dpkg-scanpackages >/dev/null 2>&1; then
-            echo "尝试使用 dpkg-scanpackages..."
-            if dpkg-scanpackages -m debs /dev/null > Packages 2>/dev/null; then
-              echo "✓ 使用 dpkg-scanpackages 成功"
-            else
-              echo "dpkg-scanpackages 失败，使用替代方法"
-              generate_packages_alternative
-            fi
-          else
-            echo "dpkg-scanpackages 不可用，使用替代方法"
-            generate_packages_alternative
-          fi
+      - name: Generate Packages files in repository
+        run: |
+          # 在当前仓库目录生成 Packages 文件
+          echo "生成 Packages 文件..."
+          dpkg-scanpackages --multiversion debs > Packages
           
-          # 创建压缩版本
-          if [ -s Packages ]; then
-            gzip -9c < Packages > Packages.gz
-            bzip2 -9c < Packages > Packages.bz2
-            echo "✓ 成功生成 Packages 文件及其压缩版本"
-            echo "Packages 文件内容预览:"
-            head -20 Packages
-          else
-            echo "✗ 未能生成有效的 Packages 文件"
+          # 检查是否成功生成
+          if [ ! -s Packages ]; then
+            echo "错误: Packages 文件为空或未生成"
             exit 1
           fi
           
-      - name: Create .nojekyll file
-        run: touch .nojekyll
+          echo "Packages 文件内容预览:"
+          head -10 Packages
+          
+      - name: Create compressed package indexes
+        run: |
+          # 在仓库目录创建压缩版本
+          echo "创建压缩版本..."
+          gzip -9c < Packages > Packages.gz
+          bzip2 -9c < Packages > Packages.bz2
+          xz -9c < Packages > Packages.xz
+          
+          echo "生成的文件:"
+          ls -la Packages*
+          
+      - name: Create Release file
+        run: |
+          # 生成 Release 文件
+          cat > Release << EOF
+          Origin: Your Sileo Repository
+          Label: Your Sileo Repository
+          Suite: stable
+          Version: 1.0
+          Codename: ios
+          Architectures: iphoneos-arm iphoneos-arm64
+          Components: main
+          Description: Your custom Sileo repository
+          MD5Sum:
+            $(md5sum Packages | cut -d' ' -f1) $(stat -c%s Packages) Packages
+            $(md5sum Packages.gz | cut -d' ' -f1) $(stat -c%s Packages.gz) Packages.gz
+            $(md5sum Packages.bz2 | cut -d' ' -f1) $(stat -c%s Packages.bz2) Packages.bz2
+            $(md5sum Packages.xz | cut -d' ' -f1) $(stat -c%s Packages.xz) Packages.xz
+          SHA256:
+            $(sha256sum Packages | cut -d' ' -f1) $(stat -c%s Packages) Packages
+            $(sha256sum Packages.gz | cut -d' ' -f1) $(stat -c%s Packages.gz) Packages.gz
+            $(sha256sum Packages.bz2 | cut -d' ' -f1) $(stat -c%s Packages.bz2) Packages.bz2
+            $(sha256sum Packages.xz | cut -d' ' -f1) $(stat -c%s Packages.xz) Packages.xz
+          EOF
+          
+          echo "Release 文件内容:"
+          cat Release
+          
+      - name: Commit package indexes to repository
+        run: |
+          # 设置 git 配置
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Actions"
+          
+          # 添加生成的文件
+          git add Packages Packages.gz Packages.bz2 Packages.xz Release
+          
+          # 检查是否有更改并提交
+          if ! git diff --staged --quiet; then
+            git commit -m "Auto-update: Regenerate package indexes"
+            git push
+            echo "✅ 成功提交 package 索引到仓库"
+          else
+            echo "⚠️ 没有检测到 package 索引的更改"
+          fi
+          
+      - name: Setup Pages
+        if: always()
+        uses: actions/configure-pages@v5
         
       - name: Build with Jekyll
+        if: always()
         uses: actions/jekyll-build-pages@v1
         with:
           source: ./
           destination: ./_site
           
       - name: Upload artifact
+        if: always()
         uses: actions/upload-pages-artifact@v3
 
   deploy:
@@ -123,7 +127,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build
+    needs: build-and-deploy
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
