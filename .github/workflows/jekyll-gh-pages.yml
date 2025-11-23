@@ -1,39 +1,130 @@
-name: Deploy Simple Repository
+name: Deploy Repository
 
 on:
   push:
-    branches: ["master"]
+    branches: ["main"]
     paths:
       - 'debs/*.deb'
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
-  update-repo:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
         
-      - name: Setup environment
+      - name: Clean previous package files
         run: |
-          sudo apt-get update
-          sudo apt-get install -y dpkg-sig dpkg-dev
+          rm -f Packages Packages.bz2 Packages.gz
           
-      - name: Generate Packages files
+      - name: Generate Packages file using alternative method
         run: |
-          # 清理旧文件
-          rm -f Packages Packages.gz Packages.bz2
+          # 方法1: 尝试使用ar直接提取控制信息（如果dpkg-scanpackages失败）
+          generate_packages_alternative() {
+            echo "使用替代方法生成 Packages 文件..."
+            > Packages  # 清空或创建文件
+            
+            for deb in debs/*.deb; do
+              if [ -f "$deb" ]; then
+                echo "处理: $(basename "$deb")"
+                
+                # 使用ar提取control.tar.gz
+                if ar -t "$deb" | grep -q "control.tar"; then
+                  # 提取控制信息
+                  ar -p "$deb" control.tar.gz | tar -xzO ./control 2>/dev/null > temp_control ||
+                  ar -p "$deb" control.tar.xz | tar -xJO ./control 2>/dev/null > temp_control ||
+                  ar -p "$deb" control.tar | tar -xO ./control 2>/dev/null > temp_control
+                  
+                  if [ -s temp_control ]; then
+                    # 获取文件大小和MD5
+                    filesize=$(stat -c%s "$deb")
+                    md5sum=$(md5sum "$deb" | cut -d' ' -f1)
+                    
+                    # 添加Package字段（从文件名提取）
+                    pkg_name=$(basename "$deb" | sed 's/_.*//')
+                    echo "Package: $pkg_name" >> Packages
+                    
+                    # 添加控制信息
+                    cat temp_control >> Packages
+                    
+                    # 添加大小和MD5
+                    echo "Filename: debs/$(basename "$deb")" >> Packages
+                    echo "Size: $filesize" >> Packages
+                    echo "MD5sum: $md5sum" >> Packages
+                    echo "" >> Packages
+                    
+                    echo "✓ 成功处理: $pkg_name"
+                  else
+                    echo "✗ 无法提取控制信息: $(basename "$deb")"
+                  fi
+                  rm -f temp_control
+                else
+                  echo "✗ 不是有效的deb包: $(basename "$deb")"
+                fi
+              fi
+            done
+          }
           
-          # 使用最简单的方法
-          dpkg-scanpackages --multiversion debs > Packages
+          # 首先尝试标准方法
+          if command -v dpkg-scanpackages >/dev/null 2>&1; then
+            echo "尝试使用 dpkg-scanpackages..."
+            if dpkg-scanpackages -m debs /dev/null > Packages 2>/dev/null; then
+              echo "✓ 使用 dpkg-scanpackages 成功"
+            else
+              echo "dpkg-scanpackages 失败，使用替代方法"
+              generate_packages_alternative
+            fi
+          else
+            echo "dpkg-scanpackages 不可用，使用替代方法"
+            generate_packages_alternative
+          fi
+          
           # 创建压缩版本
-          gzip -9c < Packages > Packages.gz
-          bzip2 -9c < Packages > Packages.bz2bz2
+          if [ -s Packages ]; then
+            gzip -9c < Packages > Packages.gz
+            bzip2 -9c < Packages > Packages.bz2
+            echo "✓ 成功生成 Packages 文件及其压缩版本"
+            echo "Packages 文件内容预览:"
+            head -20 Packages
+          else
+            echo "✗ 未能生成有效的 Packages 文件"
+            exit 1
+          fi
           
-      - name: Commit and push if changed
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add Packages Packages.gz Packages.bz2
-          git diff --staged --quiet || git commit -m "Update package indexes"
-          git push
+      - name: Create .nojekyll file
+        run: touch .nojekyll
+        
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+          
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
