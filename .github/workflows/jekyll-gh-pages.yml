@@ -35,10 +35,10 @@ jobs:
       - name: Generate Packages file for Debian repo
         run: |
           # 创建基本的Packages文件
-          dpkg-scanpackages --multiversion debs > Packages
+          sudo dpkg-scanpackages --multiversion debs > Packages
           # 创建压缩版本
-          gzip -9c < Packages > Packages.gz
-          bzip2 -9c < Packages > Packages.bz2
+          sudo gzip -9c < Packages > Packages.gz
+          sudo bzip2 -9c < Packages > Packages.bz2
           
       - name: Create .nojekyll file
         run: touch .nojekyll  # 禁止GitHub Pages使用Jekyll处理[citation:3]
