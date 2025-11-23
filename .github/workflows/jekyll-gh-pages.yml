@@ -1,8 +1,9 @@
-name: Build and Deploy Jekyll
+name: Auto Update Packages
 
 on:
   push:
-    branches: ["main"]
+    paths:
+      - 'debs/**'   # debs 文件夹有变化时自动运行
   workflow_dispatch:
 
 jobs:
@@ -13,27 +14,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.1"
-          bundler-cache: true
+      - name: Install dpkg-scanpackages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dpkg-dev
 
-      - name: Build site with Jekyll
-        run: bundle exec jekyll build
+      - name: Generate Packages
+        run: |
+          sudo rm -f Packages Packages.gz Packages.bz2
 
-      - name: Deploy to GitHub Pages
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./_site
+          sudo dpkg-scanpackages --multiversion debs > Packages
+          cat Packages | gzip -9 > Packages.gz
+          cat Packages | bzip2 -9 > Packages.bz2
 
-  deploy:
-    needs: build
-    permissions:
-      pages: write
-      id-token: write
-    runs-on: ubuntu-latest
+      - name: Commit & Push
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
 
-    steps:
-      - name: Deploy
-        uses: actions/deploy-pages@v4
+          git add Packages Packages.gz Packages.bz2
+
+          # 没变化就不提交
+          if ! git diff --cached --quiet; then
+            git commit -m "Auto-update Packages"
+            git push
+          fi
