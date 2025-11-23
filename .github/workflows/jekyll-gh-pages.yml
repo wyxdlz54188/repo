@@ -3,8 +3,11 @@ name: Auto Update Packages
 on:
   push:
     paths:
-      - 'debs/**'   # debs 文件夹有变化时自动运行
+      - 'debs/**'
   workflow_dispatch:
+
+permissions:
+  contents: write    # ← 必须！允许 workflow 推送文件
 
 jobs:
   build:
@@ -22,7 +25,6 @@ jobs:
       - name: Generate Packages
         run: |
           sudo rm -f Packages Packages.gz Packages.bz2
-
           sudo dpkg-scanpackages --multiversion debs > Packages
           cat Packages | gzip -9 > Packages.gz
           cat Packages | bzip2 -9 > Packages.bz2
@@ -34,7 +36,6 @@ jobs:
 
           git add Packages Packages.gz Packages.bz2
 
-          # 没变化就不提交
           if ! git diff --cached --quiet; then
             git commit -m "Auto-update Packages"
             git push
