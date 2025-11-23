@@ -1,49 +1,23 @@
-# Sample workflow for building and deploying a Jekyll site to GitHub Pages
-name: Update Sileo Repository
-
-on: 
+name: Update Package Index
+on:
   push:
-    branches: 
-      - master  # 请根据实际情况替换你所使用的分支名称
-    paths:
-      - 'debs/*.deb'  # 当 .deb 文件被推送到这个路径时触发工作流
-
+    paths: ['debs/**']
+  workflow_dispatch:
 jobs:
-  build-and-push:
-    runs-on: ubuntu-latest  # 使用最新版本的 Ubuntu 运行作业
-
+  update-packages:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2  # 检出仓库代码
-      
-      - name: Set up Git
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Update Packages
         run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"  # 配置 Git 用户信息
-
-      - name: Sync with Remote
-        run: git pull origin master  # 同步远程仓库的变更到当前分支
-
-      - name: Install dpkg
-        run: sudo apt-get update && sudo apt-get install -y dpkg  # 安装 dpkg 软件包管理器
-      
-      - name: Generate Packages file
+          dpkg-scanpackages debs /dev/null > Packages
+          dpkg-scanpackages debs /dev/null | gzip -9c > Packages.gz
+          dpkg-scanpackages debs /dev/null | bzip2 > Packages.bz2
+      - name: Commit & Push changes
         run: |
-          rm -r Packages
-          rm -r Packages.bz2
-          rm -r Packages.gz
-          dpkg-scanpackages --multiversion debs >> Packages  # 使用 dpkg-scanpackages 来生成 Packages 文件
-          cat Packages | gzip > Packages.gz  # 对 Packages 文件进行压缩
-          cat Packages | bzip2 > Packages.bz2  # 同时创建 bzip2 压缩文件
-
-      - name: Commit files
-        run: |
-          git add Packages Packages.gz Packages.bz2  # 添加修改后的文件到 Git
-          git commit -m "Automatically update packages" -a  # 提交更改
-
-      - name: Push changes
-        uses: ad-m/github-push-action@master  # 这是一个 Action 用于推送更改到GitHub
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
-
+          git config user.name "wyxdlz5418k"
+          git config user.email "liyuqili_1379zi@qq.com"
+          git add Packages Packages.gz Packages.bz2
+          git diff --staged --quiet || git commit -m "Update package indexes"
+          git push
