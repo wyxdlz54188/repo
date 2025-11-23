@@ -1,4 +1,4 @@
-name: Deploy Jekyll site and Debian Repository
+name: Deploy Simple Repository
 
 on:
   push:
@@ -7,65 +7,33 @@ on:
       - 'debs/*.deb'
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
-  build:
+  update-repo:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # 确保获取完整历史记录，便于某些Jekyll插件运行
-          
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
         
-      - name: Clean previous package files
+      - name: Setup environment
         run: |
-          rm -f Packages Packages.bz2 Packages.gz
+          sudo apt-get update
+          sudo apt-get install -y dpkg-sig dpkg-dev
           
-      - name: Generate Packages file for Debian repo
+      - name: Generate Packages files
         run: |
-          # 创建基本的Packages文件
-          sudo dpkg-scanpackages --multiversion debs > Packages
+          # 清理旧文件
+          rm -f Packages Packages.gz Packages.bz2
+          
+          # 使用最简单的方法
+          dpkg-scanpackages --multiversion debs > Packages
           # 创建压缩版本
-          sudo gzip -9c < Packages > Packages.gz
-          sudo bzip2 -9c < Packages > Packages.bz2
+          gzip -9c < Packages > Packages.gz
+          bzip2 -9c < Packages > Packages.bz2bz2
           
-      - name: Create .nojekyll file
-        run: touch .nojekyll  # 禁止GitHub Pages使用Jekyll处理[citation:3]
-        
-      - name: Build with Jekyll
-        uses: actions/jekyll-build-pages@v1
-        with:
-          source: ./
-          destination: ./_site
-          
-      - name: Verify built site contents
+      - name: Commit and push if changed
         run: |
-          echo "Built site contents:"
-          ls -la _site/
-          echo "Checking if Packages files are in _site:"
-          ls -la _site/Packages* || echo "Packages files not found in _site"
-          
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add Packages Packages.gz Packages.bz2
+          git diff --staged --quiet || git commit -m "Update package indexes"
+          git push
