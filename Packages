@@ -86,25 +86,23 @@ Icon: https://invalidunit.github.io/sileodepiction/Default/image_terminal.png
 Name: mount_bindfs (Dopamine)
 Sileodepiction: https://invalidunit.github.io/sileodepiction/com.nan.bindfs/js.json
 
-Package: com.ryannair05.cask3
-Version: 1.0.2
+Package: com.sparklechan.swifty
+Version: 2.0
 Architecture: iphoneos-arm64
-Maintainer: Ryan Nair <ryannairtweaks@gmail.com>
-Installed-Size: 862
-Depends: dev.theos.orion (>= 1.0.0), firmware (>= 14.0)
-Replaces: com.ryannair05.cask2
-Filename: debs/Cask3.1.0.2.deb
-Size: 321592
-MD5sum: fa37903f894a8ca6be5ace3c66a1ae2e
-SHA1: c8e01c6d98e7417c127bd67d86f6d6ac3efb154b
-SHA256: 2ecf9b576cfba135cb8fa79f1eaa141bfe2f1a7a3b8eab5792bd7216d743b619
-Section: Tweaks
-Description: Animated table scrolling
-Tag: compatible_min::ios14.0
-Author: Ryan Nair <ryannairtweaks@gmail.com>
-Depiction: https://chariz.com/get/cask-3
-Icon: https://img.chariz.cloud/icon/cask-3/icon@3x.png
-Name: Cask 3
+Maintainer: FCCT
+Depends: swift, clang-14, ldid, git
+Conflicts: com.sparklechan.sparkkit
+Filename: debs/FridaCodeManager-rootless.deb
+Size: 3084472
+MD5sum: 6013fbfb7d45e3dd3ade9ba5eabe3fa8
+SHA1: a8429e4cf634a3108d8de67dd566c4ebd1a25269
+SHA256: cafd295eda3443dea8e1df3023e9cc6b90ce4e18d9dcdefce04b3e34107a7472
+Section: Utilities
+Description: Full fledged Xcode-like IDE for iOS
+Tag: role::hacker
+Author: FCCT
+Icon: https://raw.githubusercontent.com/fridakitten/FridaCodeManager/main/Blueprint/FridaCodeManager.app/AppIcon.png
+Name: FridaCodeManager
 
 Package: dev.theos.orion14
 Version: 1.0.1
