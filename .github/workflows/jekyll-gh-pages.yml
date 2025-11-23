@@ -1,45 +1,39 @@
-name: Deploy APT Repository
+name: Auto Update Packages
 
 on:
   push:
-    branches: ["master"]
     paths:
-      - 'debs/*.deb'
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+      - 'debs/**'      # 只有 debs 目录内容改变时触发
+  workflow_dispatch:    # 手动触发
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Generate Packages file
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y dpkg-dev
-          sudo rm -f Packages Packages.bz2 Packages.gz
-          sudo dpkg-scanpackages --multiversion debs > Packages
-          gzip -c Packages > Packages.gz
-          bzip2 -c Packages > Packages.bz2
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: .
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+    steps:
+      - name: Checkout repository
+      - uses: actions/checkout@v3
+
+      - name: Install dpkg-scanpackages
+        run: sudo apt-get update && sudo apt-get install -y dpkg-dev
+
+      - name: Generate Packages files
+        run: |
+          cd ${{ github.workspace }}
+
+          sudo rm -f Packages Packages.gz Packages.bz2
+
+          sudo dpkg-scanpackages --multiversion debs > Packages
+          cat Packages | gzip -9 > Packages.gz
+          cat Packages | bzip2 -9 > Packages.bz2
+
+      - name: Commit and push updated Packages
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+          git add Packages Packages.gz Packages.bz2
+
+          # 如果没有变化就不要提交
+          git diff --cached --exit-code || git commit -m "Auto-update Packages"
+          git push
