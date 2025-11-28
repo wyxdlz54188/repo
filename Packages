@@ -32,6 +32,22 @@ Description: Troll your speed, but jailbroken.
 Author: Lessica <82flex@gmail.com>
 Name: TrollSpeed
 
+Package: com.34306.trolldecryptjb
+Version: 1.3.1-1+debug
+Architecture: iphoneos-arm64
+Maintainer: Little 34306
+Installed-Size: 1392
+Depends: mobilesubstrate (>= 0.9.5000), firmware (>= 15.0), lldb
+Filename: debs/iOS_15_16_rootless_iphoneos-arm64.deb
+Size: 290752
+MD5sum: a2cad741439f6c117c0cac43eb34decc
+SHA1: 6e728b3eeb6112019e7a25b3874a58e55269103a
+SHA256: 11756958fc92c2fb6415e5e13a147212e29261d5f8a7a7b84c11b967d31db369
+Section: Applications
+Description: Decrypt Appstore App that require higher iOS
+Author: 34306, khanhduytran0
+Name: TrollDecryptJB
+
 Package: com.exile90.icleanerpro
 Version: 7.10.0
 Architecture: iphoneos-arm64
