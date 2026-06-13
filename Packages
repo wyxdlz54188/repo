@@ -395,6 +395,22 @@ Author: HASHBANG Productions <support@hbang.ws>
 Icon: https://img.chariz.cloud/icon/newterm-beta/icon@3x.png
 Name: NewTerm3
 
+Package: wyxdlz54188.newterm
+Version: 1.0.0-1+debug
+Architecture: iphoneos-arm
+Maintainer: wyxdlz54188
+Installed-Size: 252
+Depends: firmware (>=6.0)
+Filename: debs/wyxdlz54188.newterm_1.0.0-1+debug_iphoneos-arm.deb
+Size: 39546
+MD5sum: ddc7803190e2127da4b0ae096274efef
+SHA1: 52f250c7ab24b3a923f024b980a9e65ca7f93d57
+SHA256: bfb7b566381e81611d8c8dde1c1a5e1ebeee0936258296aa67e4f235a9da7af0
+Section: Terminal
+Description: NewTerm terminal emulator for iOS 6.0+. Supports armv7/armv7s devices including iPhone 3GS, iPhone 4, iPhone 4S, iPad 2, and iPod touch 4/5. Works on iOS 6.1.3.
+Author: HASHBANG Productions (original), wyxdlz54188 (iOS 6 port)
+Name: NewTerm (iOS 6.0)
+
 Package: xyz.cypwn.flex3
 Version: 3.0
 Architecture: iphoneos-arm64
