@@ -2,8 +2,6 @@ name: Auto Update Packages
 
 on:
   push:
-    paths:
-      - 'debs/**'
   workflow_dispatch:
 
 permissions:
