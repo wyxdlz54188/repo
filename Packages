@@ -192,20 +192,20 @@ Description: fast, scalable, distributed revision control system
 Name: git
 
 Package: io.github.wyxdlz54188.oldterm
-Version: 2.0-debug-1+debug
+Version: 2.0-1+debug
 Architecture: iphoneos-arm
 Maintainer: wyxdlz54188 <lizi54188@outlook.com>
-Installed-Size: 344
+Installed-Size: 376
 Depends: system-cmds
-Filename: debs/io.github.wyxdlz54188.oldterm_2.0-debug-1+debug_iphoneos-arm.deb
-Size: 55734
-MD5sum: 93c9357dc48b81842873035cd3f1fd6c
-SHA1: be70f38dff28b44b84ea3819775bad2f16ed482e
-SHA256: e72af7eb23322d9e2593ee15e5d0b6ae6e9cfe8c6587705da91e5172e35ba976
+Filename: debs/io.github.wyxdlz54188.oldterm_2.0-1+debug_iphoneos-arm.deb
+Size: 61314
+MD5sum: ca2864558d155b6392002479f9ee4352
+SHA1: 138b8a571f0afe47e32accd3b501081f6ddf3e5a
+SHA256: acd28772c4e7d08a0df08cdca031a13bb9169b1eca7aaaa5803c49d21bcfe37a
 Section: 终端
 Description: A MobileTerminal fork
 Author: wyxdlz54188 <lizi54188@outlook.com>
-Icon: https://wyxdlz54188.github.io/repo/Icon-72@.png
+Icon: http://wyxdlz54188.github.io/repo/images/Icon-72@2x.png
 Name: NewTerm
 
 Package: jailbreak.lizi.repo
