@@ -232,10 +232,10 @@ Maintainer: wyxdlz54188 <lizi54188@outlook.com>
 Installed-Size: 344
 Depends: system-cmds
 Filename: debs/io.github.wyxdlz54188.oldterm_2.1.1-1+debug_iphoneos-arm.deb
-Size: 58428
-MD5sum: 3d7f70c17af4cc788913c37be1bb1559
-SHA1: 8c3c7e14e1738db6fa6c793461003c80006ff982
-SHA256: 50f91c0b813e931e5e9caa2b4fa6cdf9f219e1a4dda69d8dea214728254fc01d
+Size: 58254
+MD5sum: 41ad95a9b503a98cd1a242810b1c4d85
+SHA1: 4164bddad9158363e21098295f8674eda7769ff5
+SHA256: 0b3a206b301e15860fd7e02d8a1e6248eeddd24bea469baec6c96e417c52cccf
 Section: 终端
 Description: A MobileTerminal fork
 Author: wyxdlz54188 <lizi54188@outlook.com>
