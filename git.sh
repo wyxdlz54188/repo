@@ -7,6 +7,8 @@ echo "__________________________________"
 echo "__________________________________"
 echo "__________________________________"
 echo "开始推送"
+sudo chmod -R 644 debs/*
+sudo chmod -R +X debs
 git pull origin main
 git add .
 echo "上传状态"
