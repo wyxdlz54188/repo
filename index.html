@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
+        /* ===== 你的原有样式 ===== */
         :root {
             --primary: #6c5ce7;
             --primary-dark: #5649c0;
@@ -265,6 +266,29 @@
             margin-bottom: 15px;
             color: var(--primary);
         }
+
+        /* ===== 基础版专用样式（无美化降级） ===== */
+        body.ios-basic .card {
+            border-radius: 0;
+            box-shadow: none;
+            border: 1px solid #ccc;
+        }
+        body.ios-basic .card:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        body.ios-basic .btn {
+            border-radius: 0;
+        }
+        body.ios-basic .btn:hover {
+            transform: none;
+        }
+        body.ios-basic .logo {
+            border-radius: 0;
+        }
+        body.ios-basic h1 {
+            text-shadow: none;
+        }
     </style>
 </head>
 <body>
@@ -313,7 +337,84 @@
     </div>
 
     <script>
-        // 加载并显示Markdown文件
+        // ============================================================
+        //  核心：基于 WebKit 版本检测（替代 iOS 版本检测）
+        //  分水岭：WebKit 版本 < 538 走基础版，>= 538 走美化版
+        //  iOS 6.1.3 的 WebKit 版本约为 536.26，远低于 538
+        // ============================================================
+        (function() {
+            'use strict';
+
+            /**
+             * 从 UA 中提取 WebKit 版本号
+             * 示例: "AppleWebKit/536.26" → 536.26
+             */
+            function getWebKitVersion() {
+                var ua = navigator.userAgent;
+                var match = ua.match(/AppleWebKit\/(\d+\.\d+)/);
+                if (match) {
+                    return parseFloat(match[1]);
+                }
+                return null;
+            }
+
+            /**
+             * 特性兜底检测：验证是否真的支持现代 CSS
+             * 如果支持 CSS.supports，说明 WebKit 版本至少是 537+
+             */
+            function isModernEnough() {
+                // 1. 检测 CSS.supports（WebKit 537+ 开始支持）
+                if (typeof CSS !== 'undefined' && typeof CSS.supports === 'function') {
+                    return true;
+                }
+                // 2. 检测标准 Flexbox（WebKit 537.35+ 开始支持）
+                var div = document.createElement('div');
+                div.style.display = 'flex';
+                return div.style.display === 'flex';
+            }
+
+            // ========== 执行检测 ==========
+            var webkitVer = getWebKitVersion();
+            var isBasic = false; // 默认走美化版
+
+            // 情况1：无法识别 WebKit 版本 → 保守走基础版
+            if (webkitVer === null) {
+                isBasic = true;
+                console.warn('[WebKit检测] 无法识别版本，降级为基础版');
+            }
+            // 情况2：WebKit 版本 < 538 → 基础版（iOS 6.1.3 约为 536.26）
+            else if (webkitVer < 538) {
+                isBasic = true;
+                console.log('[WebKit检测] 版本 ' + webkitVer + ' < 538 → 基础版');
+            }
+            // 情况3：版本 >= 538，但特性检测不通过 → 基础版（兜底）
+            else if (webkitVer >= 538 && !isModernEnough()) {
+                isBasic = true;
+                console.warn('[WebKit检测] 版本 ' + webkitVer + ' 但特性不通过 → 基础版');
+            }
+            // 情况4：版本 >= 538 且特性通过 → 美化版
+            else {
+                console.log('[WebKit检测] 版本 ' + webkitVer + ' → 美化版');
+            }
+
+            // ========== 应用样式 ==========
+            if (isBasic) {
+                document.body.classList.add('ios-basic');
+            } else {
+                document.body.classList.add('ios-beautiful');
+            }
+
+            // 可选：把版本信息挂到全局，方便调试
+            window.__webkitVersion = webkitVer;
+            window.__isBasicMode = isBasic;
+
+            // 日志汇总
+            console.log('[WebKit检测] 最终模式:', isBasic ? '基础版' : '美化版');
+        })();
+
+        // ============================================================
+        //  原有逻辑：加载 Markdown
+        // ============================================================
         async function loadMarkdown() {
             try {
                 const response = await fetch('./markdown/index.md');
@@ -333,7 +434,6 @@
             }
         }
 
-        // 页面加载完成后执行
         document.addEventListener('DOMContentLoaded', loadMarkdown);
     </script>
 </body>
