@@ -68,6 +68,26 @@ Depiction: http://ib-soft.net/depictions/?pkgId=com.exile90.icleanerpro
 Icon: file:///Applications/iCleaner.app/Icon.png
 Name: iCleaner Pro
 
+Package: com.linusyang.localeutf8
+Version: 1.0-1
+Architecture: iphoneos-arm
+Maintainer: BigBoss <bigboss@thebigboss.org>
+Installed-Size: 186
+Depends: profile.d
+Filename: debs/com.linusyang.localeutf8_1.0-1_iphoneos-arm.deb
+Size: 5448
+MD5sum: 44518f7af981fa092bc20a24976a0c7f
+SHA1: 45e005d644f4eff178e6eed37a9c1f76c35ac941
+SHA256: 6339ffcaf3e44f4c1e3821405032cfb961e0952940f8a1b76a357a9dbecdf548
+Section: System
+Homepage: http://moreinfo.thebigboss.org/moreinfo/depiction.php?file=localeutf8Dp
+Description: UTF-8 locale files for en_US and zh_CN
+Tag: purpose::console, role::hacker
+Author: Linus Yang <laokongzi@gmail.com>
+Depiction: http://moreinfo.thebigboss.org/moreinfo/depiction.php?file=localeutf8Dp
+Dev: laokongzi
+Name: Locale Profiles in UTF-8
+
 Package: com.lizi.stupidenglishhdpatch
 Version: 1.0
 Architecture: iphoneos-arm64
@@ -242,6 +262,23 @@ Author: wyxdlz54188 <lizi54188@outlook.com>
 Icon: http://wyxdlz54188.github.io/repo/images/Icon-72@2x.png
 Name: NewTerm
 
+Package: io.github.wyxdlz54188.oldterm
+Version: 2.1.5-1+debug
+Architecture: iphoneos-arm
+Maintainer: wyxdlz54188 <lizi54188@outlook.com>
+Installed-Size: 440
+Depends: com.linusyang.localeutf8, system-cmds, sudo
+Filename: debs/io.github.wyxdlz54188.oldterm_2.1.5-1+debug_iphoneos-arm.deb
+Size: 76518
+MD5sum: 799b4c058689c7e98d94da01bcb83d8d
+SHA1: 3e1e83b80ef2cf4b33b803b80480884bf24b9b56
+SHA256: 0ec9a80e5cc1e237f32a2be611127de7068a1fc903cff7986c2bb172bec3d620
+Section: 终端
+Description: --新增关于页面markdown解析，终端中文输出，Tabbar修复
+Author: wyxdlz54188 <lizi54188@outlook.com>
+Icon: https://wyxdlz54188.github.io/repo/images/io.github.wyxdlz54188.oldterm.png
+Name: NewTerm
+
 Package: jailbreak.lizi.repo
 Version: 1.0
 Architecture: iphoneos-arm64
@@ -335,6 +372,40 @@ Section: 系统
 Description: load preferences in style
 Author: Dhinak G <dhinak@dhinak.net>
 Name: PreferenceLoader
+
+Package: shell-cmds
+Version: 118-7
+Architecture: iphoneos-arm
+Maintainer: Jay Freeman (saurik) <saurik@saurik.com>
+Installed-Size: 300
+Pre-Depends: dpkg (>= 1.14.25-8)
+Provides: killall, which
+Filename: debs/shell-cmds_118-7_iphoneos-arm.deb
+Size: 10900
+MD5sum: 87ddf6ba43dce39fc1521852a7fb02fb
+SHA1: 7cebe132c2fd96b7af6c34c42221354968cd416e
+SHA256: d5a2d17f76eb8d133d712401204da4f281127a9b929433f02b5d9541a64f7dd9
+Section: Administration
+Priority: important
+Description: killall, mktemp, renice, time, which
+
+Package: system-cmds
+Version: 433.8-14
+Architecture: iphoneos-arm
+Essential: yes
+Maintainer: Jay Freeman (saurik) <saurik@saurik.com>
+Installed-Size: 1416
+Pre-Depends: dpkg (>= 1.14.25-8)
+Depends: pam, firmware-sbin
+Provides: login, passwd, reboot
+Filename: debs/system-cmds_433.8-14_iphoneos-arm.deb
+Size: 84630
+MD5sum: 873e4ffeba43ef805899b6749e743fa0
+SHA1: 6b25a5b6b87e7e6a07e7de09fa157c6386b7f2f7
+SHA256: 33f5bf0ad1360c5a5134d95cb329fe80b30738caee064b613a5101d141afdbe9
+Section: Administration
+Priority: required
+Description: iostat, login, passwd, sync, sysctl
 
 Package: theos-dependencies
 Version: 0-1
